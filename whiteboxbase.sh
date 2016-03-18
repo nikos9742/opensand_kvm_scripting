@@ -2,46 +2,60 @@
 #Deploy base packages for hybrid KVM/Docker/LXC Openvswitch Whitebox
 img_url="https://cloud-images.ubuntu.com/trusty/current/trusty-server-cloudimg-amd64-disk1.img"
 cache_url="$HOME/trusty-server-cloudimg-amd64-disk1.img"
+runnb='0'
 if [ -f $HOME/dependance_done ]
-then
-echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
-echo "Dependance already done in previous runs"
-echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
-else
-apt-get update
-apt-get -y install qemu-kvm libvirt-bin ubuntu-vm-builder bridge-utils virt-manager openvswitch-controller openvswitch-switch openvswitch-datapath-source cloud-utils genisoimage lxc
-touch $HOME/dependance_done
+ then
+  echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+  echo "Dependance already done in previous runs"
+  echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+ else
+  apt-get update
+  apt-get -y install qemu-kvm libvirt-bin ubuntu-vm-builder bridge-utils virt-manager openvswitch-controller openvswitch-switch openvswitch-datapath-source cloud-utils genisoimage lxc 
+  touch $HOME/dependance_done
 fi
 
+### Add run number to do multiple launches simultaneously
+if [ -f $HOME/run* ]
+ then
+  echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+  echo "An other platform was launched and is actually running -- Launching another one"
+  echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+  runbn='$(basename "basename $HOME/run*") | tr -d run'
+  ((runnb++))
+ else
+  touch $HOME/run1
+fi
+
+##create work folder in home directory
 mkdir $HOME/whitebox
 cd $HOME/whitebox
 
 ##Check for image and copy or download it
 if [ -f $HOME/trusty-server-cloudimg-amd64-disk1.img ]
-then
-echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
-echo "Ubuntu Cloud Image exists in HOME no need to download ;)"
-cp $HOME/trusty-server-cloudimg-amd64-disk1.img $HOME/whitebox/disk.img.dist
-else
-echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
-echo "Ubuntu image is not in HOME :( Wait for download"
-wget --no-check-certificate -P $HOME $img_url
-cp $HOME/trusty-server-cloudimg-amd64-disk1.img $HOME/whitebox/disk.img.dist
+ then 
+  echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+  echo "Ubuntu Cloud Image exists in HOME no need to download ;)"
+  cp $HOME/trusty-server-cloudimg-amd64-disk1.img $HOME/whitebox/disk.img.dist
+ else 
+  echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+  echo "Ubuntu image is not in HOME :( Wait for download"
+  wget --no-check-certificate -P $HOME $img_url
+  cp $HOME/trusty-server-cloudimg-amd64-disk1.img $HOME/whitebox/disk.img.dist
 fi
 
 #set network openvswitch for KVM vms
 if [ -f $HOME/openvswitch_setup_done ]
-then
-echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
-echo "Openvswitch bridge setup already done in previous runs"
-echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
-else
-ovs-vsctl add-br ovsbr1
-ovs-vsctl add-port ovsbr1 eth1
-ifconfig eth1 up
-ovs-vsctl add-br ovsbr2
-ovs-vsctl add-br ovsbr3
-touch $HOME/openvswitch_setup_done
+ then
+  echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+  echo "Openvswitch bridge setup already done in previous runs"
+  echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+ else
+  ovs-vsctl add-br ovsbr1
+  ovs-vsctl add-port ovsbr1 eth1
+  ifconfig eth1 up
+  ovs-vsctl add-br ovsbr2
+  ovs-vsctl add-br ovsbr3
+  touch $HOME/openvswitch_setup_done
 fi
 
 #VM creation
@@ -70,9 +84,9 @@ cat > $HOME/whitebox/my-user-scriptGW1.txt <<EOF
 echo "deb http://packages.net4sat.org/opensand trusty stable" | sudo tee /etc/apt/sources.list.d/opensand.list
 #Update the list of available packages
 apt-get update
-#Enabling second network interface
-echo "auto eth1" >> /etc/network/interfaces.d/eth1.cfg
-echo "iface eth1 inet static" >> /etc/network/interfaces.d/eth1.cfg
+#Enabling second network interface 
+echo "auto eth1" >> /etc/network/interfaces.d/eth1.cfg 
+echo "iface eth1 inet static" >> /etc/network/interfaces.d/eth1.cfg 
 echo "\t address 172.0.16.1" >> /etc/network/interfaces.d/eth1.cfg
 echo "\t netmask 255.255.255.0" >> /etc/network/interfaces.d/eth1.cfg
 
@@ -109,9 +123,9 @@ cat > $HOME/whitebox/my-user-scriptGW2.txt <<EOF
 echo "deb http://packages.net4sat.org/opensand trusty stable" | sudo tee /etc/apt/sources.list.d/opensand.list
 #Update the list of available packages
 apt-get update
-#Enabling second network interface
-echo "auto eth1" >> /etc/network/interfaces.d/eth1.cfg
-echo "iface eth1 inet static" >> /etc/network/interfaces.d/eth1.cfg
+#Enabling second network interface 
+echo "auto eth1" >> /etc/network/interfaces.d/eth1.cfg 
+echo "iface eth1 inet static" >> /etc/network/interfaces.d/eth1.cfg 
 echo  "\t address 172.0.16.2" >> /etc/network/interfaces.d/eth1.cfg
 echo  "\t netmask 255.255.255.0" >> /etc/network/interfaces.d/eth1.cfg
 
@@ -175,9 +189,9 @@ cat > $HOME/whitebox/my-user-scriptST1.txt <<EOF
 echo "deb http://packages.net4sat.org/opensand trusty stable" | sudo tee /etc/apt/sources.list.d/opensand.list
 #Update the list of available packages
 apt-get update
-#Enabling second network interface
-echo "auto eth1" >> /etc/network/interfaces.d/eth1.cfg
-echo "iface eth1 inet static" >> /etc/network/interfaces.d/eth1.cfg
+#Enabling second network interface 
+echo "auto eth1" >> /etc/network/interfaces.d/eth1.cfg 
+echo "iface eth1 inet static" >> /etc/network/interfaces.d/eth1.cfg 
 echo  "\t address 172.0.17.1" >> /etc/network/interfaces.d/eth1.cfg
 echo  "\t netmask 255.255.255.0" >> /etc/network/interfaces.d/eth1.cfg
 
@@ -218,10 +232,10 @@ virt-install --connect qemu:///system --hvm -n OpensandSAT1 -r 1024 --vcpus 1 --
 #OpensandST1
 virt-install --connect qemu:///system --hvm -n OpensandST1 -r 1024 --vcpus 1 --os-type=linux --os-variant=ubuntutrusty --disk $HOME/whitebox/diskST1.img,format=qcow2,device=disk,bus=virtio --disk $HOME/whitebox/my-seedST1.img,device=disk,bus=virtio --nonetwork --vnc --noautoconsole --import
 
-## test with kvm raw
+## test with kvm raw 
 #   kvm -net nic -net user -hda diskSAT.img -hdb my-seedSAT.img -m 512
 
-## Mac Address randomization
+## Mac Address randomization 
 MAC1=`(date; cat /proc/interrupts) | md5sum | sed -r 's/^(.{10}).*$/\1/; s/([0-9a-f]{2})/\1:/g; s/:$//;'`
 MAC2=`(date; cat /proc/interrupts) | md5sum | sed -r 's/^(.{10}).*$/\1/; s/([0-9a-f]{2})/\1:/g; s/:$//;'`
 MAC3=`(date; cat /proc/interrupts) | md5sum | sed -r 's/^(.{10}).*$/\1/; s/([0-9a-f]{2})/\1:/g; s/:$//;'`
@@ -234,63 +248,63 @@ PREFIXMAC='00:'
 ## Create network external for VM OpensandGW1
 cat > $HOME/whitebox/ovs_network_kvm_gw1.xml <<EOF
 <interface type='bridge'>
-<mac address='$PREFIXMAC$MAC1'/>
-<source bridge='ovsbr1'/>
-<virtualport type='openvswitch'/>
+  <mac address='$PREFIXMAC$MAC1'/>
+  <source bridge='ovsbr1'/>
+  <virtualport type='openvswitch'/>
 </interface>
 EOF
 
 ## Create network internal for VM OpensandGW1
 cat > $HOME/whitebox/ovs_network_kvm_gw1_int.xml <<EOF
 <interface type='bridge'>
-<mac address='$PREFIXMAC$MAC2'/>
-<source bridge='ovsbr2'/>
-<virtualport type='openvswitch'/>
+  <mac address='$PREFIXMAC$MAC2'/>
+  <source bridge='ovsbr2'/>
+  <virtualport type='openvswitch'/>
 </interface>
 EOF
 
 ## Create network external for VM OpensandGW2
 cat > $HOME/whitebox/ovs_network_kvm_gw2.xml <<EOF
 <interface type='bridge'>
-<mac address='$PREFIXMAC$MAC3'/>
-<source bridge='ovsbr1'/>
-<virtualport type='openvswitch'/>
+  <mac address='$PREFIXMAC$MAC3'/>
+  <source bridge='ovsbr1'/>
+  <virtualport type='openvswitch'/>
 </interface>
 EOF
 
 ## Create network internal for VM OpensandGW2
 cat > $HOME/whitebox/ovs_network_kvm_gw2_int.xml <<EOF
 <interface type='bridge'>
-<mac address='$PREFIXMAC$MAC4'/>
-<source bridge='ovsbr2'/>
-<virtualport type='openvswitch'/>
+  <mac address='$PREFIXMAC$MAC4'/>
+  <source bridge='ovsbr2'/>
+  <virtualport type='openvswitch'/>
 </interface>
 EOF
 
 ## Create network external for VM OpensandSAT1
 cat > $HOME/whitebox/ovs_network_kvm_sat1.xml <<EOF
 <interface type='bridge'>
-<mac address='$PREFIXMAC$MAC5'/>
-<source bridge='ovsbr1'/>
-<virtualport type='openvswitch'/>
+  <mac address='$PREFIXMAC$MAC5'/>
+  <source bridge='ovsbr1'/>
+  <virtualport type='openvswitch'/>
 </interface>
 EOF
 
 ## Create network external for VM OpensandST1
 cat > $HOME/whitebox/ovs_network_kvm_st1.xml <<EOF
 <interface type='bridge'>
-<mac address='$PREFIXMAC$MAC6'/>
-<source bridge='ovsbr1'/>
-<virtualport type='openvswitch'/>
+  <mac address='$PREFIXMAC$MAC6'/>
+  <source bridge='ovsbr1'/>
+  <virtualport type='openvswitch'/>
 </interface>
 EOF
 
 ## Create network internal for VM OpensandST1
 cat > $HOME/whitebox/ovs_network_kvm_st1_int.xml <<EOF
 <interface type='bridge'>
-<mac address='$PREFIXMAC$MAC7'/>
-<source bridge='ovsbr3'/>
-<virtualport type='openvswitch'/>
+  <mac address='$PREFIXMAC$MAC7'/>
+  <source bridge='ovsbr3'/>
+  <virtualport type='openvswitch'/>
 </interface>
 EOF
 
