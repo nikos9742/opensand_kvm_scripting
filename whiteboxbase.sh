@@ -2,7 +2,7 @@
 #Deploy base packages for hybrid KVM/Docker/LXC Openvswitch Whitebox
 img_url="https://cloud-images.ubuntu.com/trusty/current/trusty-server-cloudimg-amd64-disk1.img"
 cache_url="$HOME/trusty-server-cloudimg-amd64-disk1.img"
-runnb='0'
+runnb=0
 separator='_'
 if [ -f $HOME/dependance_done ]
  then
@@ -22,16 +22,16 @@ if [ -f $HOME/run* ]
   echo "An other platform was launched and is actually running -- Launching another one"
   echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
   runnb='$(basename "basename $HOME/run*") | tr -d run'
-  #let "runnb++"
-  runnb='expr $runnb + 1'
+  let "runnb++"
+  #runnb='expr $runnb + 1'
   rm $HOME/run*
   touch $HOME/run$runnb
  else
   echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
   echo "No running platform has been detected from previous run -- Launching First"
   echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
-  #let "runnb++"
-  runnb='expr $runnb + 1'
+  let "runnb++"
+  #runnb='expr $runnb + 1'
   touch $HOME/run$runnb
 fi
 
