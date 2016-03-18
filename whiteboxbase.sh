@@ -294,4 +294,3 @@ virsh attach-device --domain OpensandGW2 ovs_network_kvm_gw2_int.xml
 virsh attach-device --domain OpensandSAT1 ovs_network_kvm_sat1.xml
 virsh attach-device --domain OpensandST1 ovs_network_kvm_st1.xml
 virsh attach-device --domain OpensandST1 ovs_network_kvm_st1_int.xml
-
