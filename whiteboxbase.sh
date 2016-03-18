@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/bash
 #Deploy base packages for hybrid KVM/Docker/LXC Openvswitch Whitebox
 img_url="https://cloud-images.ubuntu.com/trusty/current/trusty-server-cloudimg-amd64-disk1.img"
 cache_url="$HOME/trusty-server-cloudimg-amd64-disk1.img"
