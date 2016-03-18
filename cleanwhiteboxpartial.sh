@@ -3,9 +3,9 @@
 
 
 ### Add run number to do multiple launches simultaneously CLEANING VERSION
-runnb='0'
+runnb=''
 separator='_'
-if [ -f $HOME/run* ]
+if [ -f $HOME/run* ];
  then
   runnb=$(basename "$HOME/run*") | tr -d run
   echo ''
@@ -41,11 +41,14 @@ echo ' Cleaning ' $HOME/whitebox$separator$runnb
 rm -rf $HOME/whitebox$separator$runnb
 
 
-if [ -f $HOME/run* ]
+if [ -f $HOME/run* ];
  then
     rm $HOME/run*
     let "runnb--"
-    touch $HOME/run$runnb
+    if $runnb != 0 ; then 
+      touch $HOME/run$runnb
+    fi  
+fi
 
 
 
