@@ -47,12 +47,12 @@ fi
 #VM creation
 ## Convert the compressed qcow file downloaded to a uncompressed qcow2
 echo "--------- Uncompressing Image File --------------"
-qemu-img convert -O qcow2 disk.img.dist disk.img.orig
+qemu-img convert -O qcow2 $HOME/whitebox/disk.img.dist $HOME/whitebox/disk.img.orig
 echo "--------------- Uncompressed --------------------"
 
 ####################################################################################
 ## Create a file with some user-data in it for OpensandGW1
-cat > my-cloud-configGW1.txt <<EOF
+cat > $HOME/whitebox/my-cloud-configGW1.txt <<EOF
 #cloud-config
 password: bordeaux
 chpasswd: { expire: False }
@@ -63,7 +63,7 @@ apt_upgrade: True
 final_message: "The system is finally up, after $UPTIME seconds"
 EOF
 
-cat > my-user-scriptGW1.txt <<EOF
+cat > $HOME/whitebox/my-user-scriptGW1.txt <<EOF
 #!/bin/sh
 #OpensandGW1 Configuration
 #Add the OpenSAND repository
@@ -84,14 +84,14 @@ reboot
 EOF
 
 #create the mime multipart
-write-mime-multipart --output=combined-userdataGW1.txt my-user-scriptGW1.txt:text/x-shellscript my-cloud-configGW1.txt:text/cloud-config
+write-mime-multipart --output=$HOME/whitebox/combined-userdataGW1.txt $HOME/whitebox/my-user-scriptGW1.txt:text/x-shellscript $HOME/whitebox/my-cloud-configGW1.txt:text/cloud-config
 
 ## create the disk with NoCloud data on it.
-cloud-localds my-seedGW1.img combined-userdataGW1.txt
+cloud-localds $HOME/whitebox/my-seedGW1.img $HOME/whitebox/combined-userdataGW1.txt
 
 ####################################################################################
 ## Create a file with some user-data in it for OpensandGW2
-cat > my-cloud-configGW2.txt <<EOF
+cat > $HOME/whitebox/my-cloud-configGW2.txt <<EOF
 #cloud-config
 password: bordeaux
 chpasswd: { expire: False }
@@ -102,7 +102,7 @@ apt_upgrade: True
 final_message: "The system is finally up, after $UPTIME seconds"
 EOF
 
-cat > my-user-scriptGW2.txt <<EOF
+cat > $HOME/whitebox/my-user-scriptGW2.txt <<EOF
 #!/bin/sh
 #OpensandGW2 Configuration
 #Add the OpenSAND repository
@@ -122,14 +122,14 @@ reboot
 EOF
 
 #create the mime multipart
-write-mime-multipart --output=combined-userdataGW2.txt my-user-scriptGW2.txt:text/x-shellscript my-cloud-configGW2.txt:text/cloud-config
+write-mime-multipart --output=$HOME/whitebox/combined-userdataGW2.txt $HOME/whitebox/my-user-scriptGW2.txt:text/x-shellscript $HOME/whitebox/my-cloud-configGW2.txt:text/cloud-config
 
 ## create the disk with NoCloud data on it.
-cloud-localds my-seedGW2.img combined-userdataGW2.txt
+cloud-localds $HOME/whitebox/my-seedGW2.img $HOME/whitebox/combined-userdataGW2.txt
 
 ####################################################################################
 ## Create a file with some user-data in it for OpensandSAT1
-cat > my-cloud-configSAT1.txt <<EOF
+cat > $HOME/whitebox/my-cloud-configSAT1.txt <<EOF
 #cloud-config
 password: bordeaux
 chpasswd: { expire: False }
@@ -139,7 +139,7 @@ sudo: ['ALL=(ALL) NOPASSWD:ALL']
 apt_upgrade: True
 final_message: "The system is finally up, after $UPTIME seconds"
 EOF
-cat > my-user-scriptSAT1.txt <<EOF
+cat > $HOME/whitebox/my-user-scriptSAT1.txt <<EOF
 #!/bin/sh
 #OpensandSAT1 Configuration
 #Add the OpenSAND repository
@@ -150,15 +150,15 @@ reboot
 EOF
 
 #create the mime multipart
-write-mime-multipart --output=combined-userdataSAT1.txt my-user-scriptSAT1.txt:text/x-shellscript my-cloud-configSAT1.txt:text/cloud-config
+write-mime-multipart --output=$HOME/whitebox/combined-userdataSAT1.txt $HOME/whitebox/my-user-scriptSAT1.txt:text/x-shellscript $HOME/whitebox/my-cloud-configSAT1.txt:text/cloud-config
 
 ## create the disk with NoCloud data on it.
-cloud-localds my-seedSAT1.img combined-userdataSAT1.txt
+cloud-localds $HOME/whitebox/my-seedSAT1.img $HOME/whitebox/combined-userdataSAT1.txt
 
 ####################################################################################
 
 ## Create a file with some user-data in it for OpensandST1
-cat > my-cloud-configST1.txt <<EOF
+cat > $HOME/whitebox/my-cloud-configST1.txt <<EOF
 #cloud-config
 password: bordeaux
 chpasswd: { expire: False }
@@ -168,7 +168,7 @@ sudo: ['ALL=(ALL) NOPASSWD:ALL']
 apt_upgrade: True
 final_message: "The system is finally up, after $UPTIME seconds"
 EOF
-cat > my-user-scriptST1.txt <<EOF
+cat > $HOME/whitebox/my-user-scriptST1.txt <<EOF
 #!/bin/sh
 #OpensandST1 Configuration
 #Add the OpenSAND repository
@@ -188,35 +188,35 @@ reboot
 EOF
 
 #create the mime multipart
-write-mime-multipart --output=combined-userdataST1.txt my-user-scriptST1.txt:text/x-shellscript my-cloud-configST1.txt:text/cloud-config
+write-mime-multipart --output=$HOME/whitebox/combined-userdataST1.txt $HOME/whitebox/my-user-scriptST1.txt:text/x-shellscript $HOME/whitebox/my-cloud-configST1.txt:text/cloud-config
 
 ## create the disk with NoCloud data on it.
-cloud-localds my-seedST1.img combined-userdataST1.txt
+cloud-localds $HOME/whitebox/my-seedST1.img $HOME/whitebox/combined-userdataST1.txt
 ####################################################################################
 
 
 #  genisoimage -output cidata.iso -volid cidata -joliet -rock my-user-dataSAT
 
 ## Create a delta disk to keep our .orig file pristine
-qemu-img create -f qcow2 -b disk.img.orig diskGW1.img
-qemu-img create -f qcow2 -b disk.img.orig diskGW2.img
-qemu-img create -f qcow2 -b disk.img.orig diskSAT1.img
-qemu-img create -f qcow2 -b disk.img.orig diskST1.img
+qemu-img create -f qcow2 -b $HOME/whitebox/disk.img.orig $HOME/whitebox/diskGW1.img
+qemu-img create -f qcow2 -b $HOME/whitebox/disk.img.orig $HOME/whitebox/diskGW2.img
+qemu-img create -f qcow2 -b $HOME/whitebox/disk.img.orig $HOME/whitebox/diskSAT1.img
+qemu-img create -f qcow2 -b $HOME/whitebox/disk.img.orig $HOME/whitebox/diskST1.img
 
 ## Create the VM with the option for cloud-init and openvswitch network
 # virt-install --connect qemu:///system --hvm -n opensandKVMSAT -r 1024 --vcpus 1 --os-type=linux --os-variant=ubuntutrusty --disk diskSAT.img,device=disk,bus=virtio --disk my-seedSAT.img,device=disk,bus=virtio --nonetwork --vnc --noautoconsole --import
 
 #OpensandGW1
-virt-install --connect qemu:///system --hvm -n OpensandGW1 -r 1024 --vcpus 1 --os-type=linux --os-variant=ubuntutrusty --disk diskGW1.img,format=qcow2,device=disk,bus=virtio --disk my-seedGW1.img,device=disk,bus=virtio --nonetwork --vnc --noautoconsole --import
+virt-install --connect qemu:///system --hvm -n OpensandGW1 -r 1024 --vcpus 1 --os-type=linux --os-variant=ubuntutrusty --disk $HOME/whitebox/diskGW1.img,format=qcow2,device=disk,bus=virtio --disk $HOME/whitebox/my-seedGW1.img,device=disk,bus=virtio --nonetwork --vnc --noautoconsole --import
 
 #OpensandGW2
-virt-install --connect qemu:///system --hvm -n OpensandGW2 -r 1024 --vcpus 1 --os-type=linux --os-variant=ubuntutrusty --disk diskGW2.img,format=qcow2,device=disk,bus=virtio --disk my-seedGW2.img,device=disk,bus=virtio --nonetwork --vnc --noautoconsole --import
+virt-install --connect qemu:///system --hvm -n OpensandGW2 -r 1024 --vcpus 1 --os-type=linux --os-variant=ubuntutrusty --disk $HOME/whitebox/diskGW2.img,format=qcow2,device=disk,bus=virtio --disk $HOME/whitebox/my-seedGW2.img,device=disk,bus=virtio --nonetwork --vnc --noautoconsole --import
 
 #OpensandSAT1
-virt-install --connect qemu:///system --hvm -n OpensandSAT1 -r 1024 --vcpus 1 --os-type=linux --os-variant=ubuntutrusty --disk diskSAT1.img,format=qcow2,device=disk,bus=virtio --disk my-seedSAT1.img,device=disk,bus=virtio --nonetwork --vnc --noautoconsole --import
+virt-install --connect qemu:///system --hvm -n OpensandSAT1 -r 1024 --vcpus 1 --os-type=linux --os-variant=ubuntutrusty --disk $HOME/whitebox/diskSAT1.img,format=qcow2,device=disk,bus=virtio --disk $HOME/whitebox/my-seedSAT1.img,device=disk,bus=virtio --nonetwork --vnc --noautoconsole --import
 
 #OpensandST1
-virt-install --connect qemu:///system --hvm -n OpensandST1 -r 1024 --vcpus 1 --os-type=linux --os-variant=ubuntutrusty --disk diskST1.img,format=qcow2,device=disk,bus=virtio --disk my-seedST1.img,device=disk,bus=virtio --nonetwork --vnc --noautoconsole --import
+virt-install --connect qemu:///system --hvm -n OpensandST1 -r 1024 --vcpus 1 --os-type=linux --os-variant=ubuntutrusty --disk $HOME/whitebox/diskST1.img,format=qcow2,device=disk,bus=virtio --disk $HOME/whitebox/my-seedST1.img,device=disk,bus=virtio --nonetwork --vnc --noautoconsole --import
 
 ## test with kvm raw
 #   kvm -net nic -net user -hda diskSAT.img -hdb my-seedSAT.img -m 512
@@ -232,7 +232,7 @@ MAC7=`(date; cat /proc/interrupts) | md5sum | sed -r 's/^(.{10}).*$/\1/; s/([0-9
 PREFIXMAC='00:'
 
 ## Create network external for VM OpensandGW1
-cat > ovs_network_kvm_gw1.xml <<EOF
+cat > $HOME/whitebox/ovs_network_kvm_gw1.xml <<EOF
 <interface type='bridge'>
 <mac address='$PREFIXMAC$MAC1'/>
 <source bridge='ovsbr1'/>
@@ -241,7 +241,7 @@ cat > ovs_network_kvm_gw1.xml <<EOF
 EOF
 
 ## Create network internal for VM OpensandGW1
-cat > ovs_network_kvm_gw1_int.xml <<EOF
+cat > $HOME/whitebox/ovs_network_kvm_gw1_int.xml <<EOF
 <interface type='bridge'>
 <mac address='$PREFIXMAC$MAC2'/>
 <source bridge='ovsbr2'/>
@@ -250,7 +250,7 @@ cat > ovs_network_kvm_gw1_int.xml <<EOF
 EOF
 
 ## Create network external for VM OpensandGW2
-cat > ovs_network_kvm_gw2.xml <<EOF
+cat > $HOME/whitebox/ovs_network_kvm_gw2.xml <<EOF
 <interface type='bridge'>
 <mac address='$PREFIXMAC$MAC3'/>
 <source bridge='ovsbr1'/>
@@ -259,7 +259,7 @@ cat > ovs_network_kvm_gw2.xml <<EOF
 EOF
 
 ## Create network internal for VM OpensandGW2
-cat > ovs_network_kvm_gw2_int.xml <<EOF
+cat > $HOME/whitebox/ovs_network_kvm_gw2_int.xml <<EOF
 <interface type='bridge'>
 <mac address='$PREFIXMAC$MAC4'/>
 <source bridge='ovsbr2'/>
@@ -268,7 +268,7 @@ cat > ovs_network_kvm_gw2_int.xml <<EOF
 EOF
 
 ## Create network external for VM OpensandSAT1
-cat > ovs_network_kvm_sat1.xml <<EOF
+cat > $HOME/whitebox/ovs_network_kvm_sat1.xml <<EOF
 <interface type='bridge'>
 <mac address='$PREFIXMAC$MAC5'/>
 <source bridge='ovsbr1'/>
@@ -277,7 +277,7 @@ cat > ovs_network_kvm_sat1.xml <<EOF
 EOF
 
 ## Create network external for VM OpensandST1
-cat > ovs_network_kvm_st1.xml <<EOF
+cat > $HOME/whitebox/ovs_network_kvm_st1.xml <<EOF
 <interface type='bridge'>
 <mac address='$PREFIXMAC$MAC6'/>
 <source bridge='ovsbr1'/>
@@ -286,7 +286,7 @@ cat > ovs_network_kvm_st1.xml <<EOF
 EOF
 
 ## Create network internal for VM OpensandST1
-cat > ovs_network_kvm_st1_int.xml <<EOF
+cat > $HOME/whitebox/ovs_network_kvm_st1_int.xml <<EOF
 <interface type='bridge'>
 <mac address='$PREFIXMAC$MAC7'/>
 <source bridge='ovsbr3'/>
@@ -295,10 +295,10 @@ cat > ovs_network_kvm_st1_int.xml <<EOF
 EOF
 
 ## attach network to VM
-virsh attach-device --domain OpensandGW1 ovs_network_kvm_gw1.xml
-virsh attach-device --domain OpensandGW1 ovs_network_kvm_gw1_int.xml
-virsh attach-device --domain OpensandGW2 ovs_network_kvm_gw2.xml
-virsh attach-device --domain OpensandGW2 ovs_network_kvm_gw2_int.xml
-virsh attach-device --domain OpensandSAT1 ovs_network_kvm_sat1.xml
-virsh attach-device --domain OpensandST1 ovs_network_kvm_st1.xml
-virsh attach-device --domain OpensandST1 ovs_network_kvm_st1_int.xml
+virsh attach-device --domain OpensandGW1 $HOME/whitebox/ovs_network_kvm_gw1.xml
+virsh attach-device --domain OpensandGW1 $HOME/whitebox/ovs_network_kvm_gw1_int.xml
+virsh attach-device --domain OpensandGW2 $HOME/whitebox/ovs_network_kvm_gw2.xml
+virsh attach-device --domain OpensandGW2 $HOME/whitebox/ovs_network_kvm_gw2_int.xml
+virsh attach-device --domain OpensandSAT1 $HOME/whitebox/ovs_network_kvm_sat1.xml
+virsh attach-device --domain OpensandST1 $HOME/whitebox/ovs_network_kvm_st1.xml
+virsh attach-device --domain OpensandST1 $HOME/whitebox/ovs_network_kvm_st1_int.xml
