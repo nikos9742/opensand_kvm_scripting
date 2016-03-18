@@ -20,8 +20,10 @@ if [ -f $HOME/run* ]
   echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
   echo "An other platform was launched and is actually running -- Launching another one"
   echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
-  runbn='$(basename "basename $HOME/run*") | tr -d run'
-  ((runnb++))
+  runnb='$(basename "basename $HOME/run*") | tr -d run'
+  let "runnb++"
+  rm $HOME/run*
+  touch $HOME/run$runnb
  else
   touch $HOME/run1
 fi
