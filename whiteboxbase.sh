@@ -221,12 +221,20 @@ virt-install --connect qemu:///system --hvm -n OpensandST1 -r 1024 --vcpus 1 --o
 ## test with kvm raw
 #   kvm -net nic -net user -hda diskSAT.img -hdb my-seedSAT.img -m 512
 
-
+## Mac Address randomization
+MAC1=`(date; cat /proc/interrupts) | md5sum | sed -r 's/^(.{10}).*$/\1/; s/([0-9a-f]{2})/\1:/g; s/:$//;'`
+MAC2=`(date; cat /proc/interrupts) | md5sum | sed -r 's/^(.{10}).*$/\1/; s/([0-9a-f]{2})/\1:/g; s/:$//;'`
+MAC3=`(date; cat /proc/interrupts) | md5sum | sed -r 's/^(.{10}).*$/\1/; s/([0-9a-f]{2})/\1:/g; s/:$//;'`
+MAC4=`(date; cat /proc/interrupts) | md5sum | sed -r 's/^(.{10}).*$/\1/; s/([0-9a-f]{2})/\1:/g; s/:$//;'`
+MAC5=`(date; cat /proc/interrupts) | md5sum | sed -r 's/^(.{10}).*$/\1/; s/([0-9a-f]{2})/\1:/g; s/:$//;'`
+MAC6=`(date; cat /proc/interrupts) | md5sum | sed -r 's/^(.{10}).*$/\1/; s/([0-9a-f]{2})/\1:/g; s/:$//;'`
+MAC7=`(date; cat /proc/interrupts) | md5sum | sed -r 's/^(.{10}).*$/\1/; s/([0-9a-f]{2})/\1:/g; s/:$//;'`
+PREFIXMAC='00:'
 
 ## Create network external for VM OpensandGW1
 cat > ovs_network_kvm_gw1.xml <<EOF
 <interface type='bridge'>
-<mac address='52:54:00:71:b1:b7'/>
+<mac address='$PREFIXMAC$MAC1'/>
 <source bridge='ovsbr1'/>
 <virtualport type='openvswitch'/>
 </interface>
@@ -235,7 +243,7 @@ EOF
 ## Create network internal for VM OpensandGW1
 cat > ovs_network_kvm_gw1_int.xml <<EOF
 <interface type='bridge'>
-<mac address='52:54:00:71:b1:b8'/>
+<mac address='$PREFIXMAC$MAC2'/>
 <source bridge='ovsbr2'/>
 <virtualport type='openvswitch'/>
 </interface>
@@ -244,7 +252,7 @@ EOF
 ## Create network external for VM OpensandGW2
 cat > ovs_network_kvm_gw2.xml <<EOF
 <interface type='bridge'>
-<mac address='52:54:00:71:b2:b7'/>
+<mac address='$PREFIXMAC$MAC3'/>
 <source bridge='ovsbr1'/>
 <virtualport type='openvswitch'/>
 </interface>
@@ -253,7 +261,7 @@ EOF
 ## Create network internal for VM OpensandGW2
 cat > ovs_network_kvm_gw2_int.xml <<EOF
 <interface type='bridge'>
-<mac address='52:54:00:71:b2:b8'/>
+<mac address='$PREFIXMAC$MAC4'/>
 <source bridge='ovsbr2'/>
 <virtualport type='openvswitch'/>
 </interface>
@@ -262,7 +270,7 @@ EOF
 ## Create network external for VM OpensandSAT1
 cat > ovs_network_kvm_sat1.xml <<EOF
 <interface type='bridge'>
-<mac address='52:54:00:71:b3:b7'/>
+<mac address='$PREFIXMAC$MAC5'/>
 <source bridge='ovsbr1'/>
 <virtualport type='openvswitch'/>
 </interface>
@@ -271,7 +279,7 @@ EOF
 ## Create network external for VM OpensandST1
 cat > ovs_network_kvm_st1.xml <<EOF
 <interface type='bridge'>
-<mac address='52:54:00:71:b4:b7'/>
+<mac address='$PREFIXMAC$MAC6'/>
 <source bridge='ovsbr1'/>
 <virtualport type='openvswitch'/>
 </interface>
@@ -280,7 +288,7 @@ EOF
 ## Create network internal for VM OpensandST1
 cat > ovs_network_kvm_st1_int.xml <<EOF
 <interface type='bridge'>
-<mac address='52:54:00:71:b4:b8'/>
+<mac address='$PREFIXMAC$MAC7'/>
 <source bridge='ovsbr3'/>
 <virtualport type='openvswitch'/>
 </interface>
