@@ -34,12 +34,14 @@ virsh undefine OpensandGW2$separator$runnb
 virsh undefine OpensandSAT1$separator$runnb
 virsh undefine OpensandST1$separator$runnb
 
-
+echo 'Cleaning $HOME/whitebox$separator$runnb'
 rm -rf $HOME/whitebox$separator$runnb
 
 #((runnb--))
 #rm $HOME/run*
 #touch $HOME/run$runnb
+if
+ 
 
 
 
