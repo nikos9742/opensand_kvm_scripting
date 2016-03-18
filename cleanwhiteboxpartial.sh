@@ -45,7 +45,7 @@ if [ -f $HOME/run* ];
  then
     rm $HOME/run*
     let "runnb--"
-    if $runnb != 0 ; then 
+    if [ $runnb != 0 ] ; then 
       touch $HOME/run$runnb
     fi  
 fi
