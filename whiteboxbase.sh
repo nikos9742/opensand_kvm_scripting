@@ -34,8 +34,8 @@ if [ -f $HOME/run* ]
 fi
 
 ##create work folder in home directory
-mkdir $HOME/whitebox$runnb$runnb
-cd $HOME/whitebox$runnb$runnb
+mkdir $HOME/whitebox$runnb
+cd $HOME/whitebox$runnb
 
 ##Check for image and copy or download it
 if [ -f $HOME/trusty-server-cloudimg-amd64-disk1.img ]
