@@ -25,7 +25,11 @@ if [ -f $HOME/run* ]
   rm $HOME/run*
   touch $HOME/run$runnb
  else
-  touch $HOME/run1
+  echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+  echo "No running platform has been detected from previous run -- Launching First"
+  echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
+  let "runnb++"
+  touch $HOME/run$runnb
 fi
 
 ##create work folder in home directory
