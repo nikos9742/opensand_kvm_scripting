@@ -22,14 +22,16 @@ if [ -f $HOME/run* ]
   echo "An other platform was launched and is actually running -- Launching another one"
   echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
   runnb='$(basename "basename $HOME/run*") | tr -d run'
-  let "runnb++"
+  #let "runnb++"
+  runnb='expr $runnb + 1'
   rm $HOME/run*
   touch $HOME/run$runnb
  else
   echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
   echo "No running platform has been detected from previous run -- Launching First"
   echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
-  let "runnb++"
+  #let "runnb++"
+  runnb='expr $runnb + 1'
   touch $HOME/run$runnb
 fi
 
