@@ -4,6 +4,26 @@ img_url="https://cloud-images.ubuntu.com/trusty/current/trusty-server-cloudimg-a
 cache_url="$HOME/trusty-server-cloudimg-amd64-disk1.img"
 runnb=0
 separator='_'
+
+CONFIG=$1
+
+# Use this to set the new config value, needs 2 parameters. 
+# You could check that $1 and $1 is set, but I am lazy
+function set_config(){
+    sudo sed -i "s/^\($1\s*=\s*\).*\$/\1$2/" $CONFIG
+}
+
+# INITIALIZE CONFIG IF IT'S MISSING
+if [ ! -e "${CONFIG}" ] ; then
+    # Set default variable value
+    sudo touch $CONFIG
+    echo "myname=\"Test\"" | sudo tee --append $CONFIG
+fi
+
+# LOAD THE CONFIG FILE
+source $CONFIG
+
+
 if [ -f $HOME/dependance_done ]
  then
   echo "@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@"
